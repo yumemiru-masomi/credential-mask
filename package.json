@@ -1,0 +1,21 @@
+{
+  "name": "ai-image",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/vision": "^4.3.2",
+    "@google/generative-ai": "^0.21.0",
+    "@napi-rs/canvas": "^0.1.65",
+    "@types/node": "^22.10.2",
+    "dotenv": "^16.4.7",
+    "typescript": "^5.7.2"
+  }
+}
