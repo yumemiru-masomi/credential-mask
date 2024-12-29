@@ -1,19 +1,12 @@
 import vision from "@google-cloud/vision";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { writeFile } from "fs/promises";
 
 async function quickstart() {
-  // Ensure the target word is passed as a command-line argument
-  const targetWord = process.argv[2]?.toLowerCase();
-  if (!targetWord) {
-    console.error(
-      "Error: No target word specified. Usage: node --env-file=.env image-processing/credential-mask.js <target-word>"
-    );
-    process.exit(1);
-  }
-
   // Creates clients
   const client = new vision.ImageAnnotatorClient();
+  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI);
 
   // Performs text detection on the image file
   const fileName = process.env.FILE_NAME;
@@ -34,10 +27,27 @@ async function quickstart() {
   // Draw the image onto the canvas
   ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
 
-  // Draw red boxes only for the specified target word
+  // Prepare prompt for Google Generative AI
+  const sensitiveTexts = detections
+    .map((text, index) => {
+      if (index !== 0) return text.description;
+    })
+    .filter(Boolean)
+    .join(", ");
+
+  const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-pro" });
+
+  const prompt = `画像内に含まれる以下の情報を特定し、それらを赤い矩形で塗りつぶしてください:APIキー: アルファベットと数字が混在する長い文字列（例: "AIza..."）。メールアドレス: '@' を含む文字列。電話番号: 数字と '-' が含まれる形式（例: "03-1234-5678"）。クレジットカード番号: 16桁の数字。明らかに個人名と分かる名前。これら以外の情報はそのまま残してください。: ${sensitiveTexts}.`;
+  console.log("Prompt for Generative AI:", prompt);
+
+  // Generate sensitive information response
+  const resultAI = await model.generateContent(prompt);
+  console.log("AI Response:", resultAI.response.text());
+
+  // Draw red boxes for detected texts
   detections.forEach((text, index) => {
-    if (index !== 0 && text.description.toLowerCase() === targetWord) {
-      console.log(`Text to mask: ${text.description}`);
+    if (index !== 0) {
+      console.log(`Text: ${text.description}`);
 
       // Extract and log the bounding box coordinates
       const vertices = text.boundingPoly.vertices;
@@ -68,8 +78,6 @@ async function quickstart() {
       });
       ctx.closePath();
       ctx.stroke();
-    } else {
-      console.log(`Text not masked: ${text.description}`);
     }
   });
 

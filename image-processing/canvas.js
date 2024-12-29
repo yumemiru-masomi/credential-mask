@@ -3,7 +3,7 @@ import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { writeFile } from "fs/promises";
 
 // Google Generative AI APIのセットアップ
-const genAI = new GoogleGenerativeAI("AIzaSyAKpLmE2gvWzwZYX8mt134kkOQVsvRnJNg");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI);
 const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-pro" });
 
 (async () => {

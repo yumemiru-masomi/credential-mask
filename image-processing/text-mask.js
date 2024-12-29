@@ -3,16 +3,7 @@ import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { writeFile } from "fs/promises";
 
 async function quickstart() {
-  // Ensure the target word is passed as a command-line argument
-  const targetWord = process.argv[2]?.toLowerCase();
-  if (!targetWord) {
-    console.error(
-      "Error: No target word specified. Usage: node --env-file=.env image-processing/credential-mask.js <target-word>"
-    );
-    process.exit(1);
-  }
-
-  // Creates clients
+  // Creates a client
   const client = new vision.ImageAnnotatorClient();
 
   // Performs text detection on the image file
@@ -34,10 +25,13 @@ async function quickstart() {
   // Draw the image onto the canvas
   ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
 
-  // Draw red boxes only for the specified target word
+  // Loop through each detected text and log its description and boundingPoly
   detections.forEach((text, index) => {
-    if (index !== 0 && text.description.toLowerCase() === targetWord) {
-      console.log(`Text to mask: ${text.description}`);
+    if (index === 0) {
+      // The first annotation contains the full text detected
+      console.log(`Full Text: ${text.description}`);
+    } else {
+      console.log(`Text: ${text.description}`);
 
       // Extract and log the bounding box coordinates
       const vertices = text.boundingPoly.vertices;
@@ -68,8 +62,6 @@ async function quickstart() {
       });
       ctx.closePath();
       ctx.stroke();
-    } else {
-      console.log(`Text not masked: ${text.description}`);
     }
   });
 
