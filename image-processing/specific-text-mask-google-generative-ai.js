@@ -37,7 +37,12 @@ async function quickstart() {
 
   const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-pro" });
 
-  const prompt = `画像内に含まれる以下の情報を特定し、それらを赤い矩形で塗りつぶしてください:APIキー: アルファベットと数字が混在する長い文字列（例: "AIza..."）。メールアドレス: '@' を含む文字列。電話番号: 数字と '-' が含まれる形式（例: "03-1234-5678"）。クレジットカード番号: 16桁の数字。明らかに個人名と分かる名前。これら以外の情報はそのまま残してください。: ${sensitiveTexts}.`;
+  const prompt = `画像内に含まれる以下の情報を特定し、それらを赤い矩形で塗りつぶしてください:
+      APIキー: アルファベットと数字が混在する長い文字列（例: "AIza..."）。
+      メールアドレス: '@' を含む文字列。電話番号: 数字と '-' が含まれる形式（例: "03-1234-5678"）。
+      クレジットカード番号: 16桁の数字。明らかに個人名と分かる名前。
+      これら以外の情報はそのまま残してください。: ${sensitiveTexts}.`;
+
   console.log("Prompt for Generative AI:", prompt);
 
   // Generate sensitive information response
