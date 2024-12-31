@@ -41,8 +41,6 @@ async function quickstart() {
    - 文脈に基づいて「特定のブランド」「会社名」「プロジェクト名」などと推測されるもの。
    - 一般的な単語（例: 'project', 'dashboard', 'add'）は含まない。
 7. 以下の文字列が含まれていたら、それは隠すべき情報としてください。
-   - mnc
-   - witdesignplaats-co
    - yumemi
 
 以下のテキストに基づいて、隠すべき情報を JSON 形式で返してください。
